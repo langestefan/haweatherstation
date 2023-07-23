@@ -1,0 +1,4 @@
+station_model: Bresser-5in1
+station_id: 176
+usb_path: /dev/swradio0
+entity_id: sensor.bresser_weather_station

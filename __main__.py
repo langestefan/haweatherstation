@@ -28,7 +28,7 @@ def main():
     init_logger()
 
     # load config
-    with open("weatherstation/config.yaml", "r", encoding="utf-8") as file:
+    with open("haweatherstation/config.yaml", "r", encoding="utf-8") as file:
         config = yaml.safe_load(file)
         _LOGGER.debug("Loaded config: \n%s", config)
 

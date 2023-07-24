@@ -93,7 +93,8 @@ class WeatherData:
     raw_data: InitVar[dict]
     temperature: float = field(init=False)
     humidity: int = field(init=False)
-    wind_speed: float = field(init=False)
+    wind_speed_avg: float = field(init=False)
+    wind_speed_max: float = field(init=False)
     wind_direction: int = field(init=False)
     rain: float = field(init=False)
     battery_ok: bool = field(init=False)
@@ -102,7 +103,8 @@ class WeatherData:
     def __post_init__(self, raw_data: dict):
         self.temperature = float(raw_data.get("temperature_C"))
         self.humidity = int(raw_data.get("humidity"))
-        self.wind_speed = float(raw_data.get("wind_avg_m_s"))
+        self.wind_speed_avg = float(raw_data.get("wind_avg_m_s"))
+        self.wind_speed_max = float(raw_data.get("wind_max_m_s"))
         self.wind_direction = int(raw_data.get("wind_dir_deg"))
         self.rain = float(raw_data.get("rain_mm"))
         self.battery_ok = bool(raw_data.get("battery_ok"))

@@ -161,3 +161,6 @@ cython_debug/
 
 # venv
 weatherstation
+
+# secrets
+secrets.yaml

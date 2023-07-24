@@ -2,3 +2,5 @@ station_model: Bresser-5in1
 station_id: 176
 usb_path: /dev/swradio0
 entity_id: sensor.bresser_weather_station
+hass_url: http://192.168.50.184:8123
+log_level: INFO

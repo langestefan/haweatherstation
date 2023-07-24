@@ -78,3 +78,21 @@ model     : Bresser-5in1 id        : 176
 Battery   : 1            Temperature: 14.6 C       Humidity  : 91            Wind Gust : 2.0 m/s
 Wind Speed: 1.2 m/s      Direction : 180.0         Rain      : 20.0 mm       Integrity : CHECKSUM
 ```
+
+Or in JSON format:
+
+```
+{
+  "time":"2023-07-23 00:40:40",
+  "model":"Bresser-5in1",
+  "id":176,
+  "battery_ok":1,
+  "temperature_C":14.600,
+  "humidity":91,
+  "wind_max_m_s":0.800,
+  "wind_avg_m_s":1.100,
+  "wind_dir_deg":180.000,
+  "rain_mm":20.000,
+  "mic":"CHECKSUM"
+} 
+```

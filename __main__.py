@@ -12,7 +12,7 @@ _LOGGER = logging.getLogger(__name__)
 
 def init_logger(log_level=logging.DEBUG):
     """Initialize python logger.
-    
+
     :param log_level: The log level to run the entire application with.
     """
     logging.basicConfig(level=log_level)

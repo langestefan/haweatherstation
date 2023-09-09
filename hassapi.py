@@ -7,7 +7,18 @@ from dataclasses import dataclass, field
 from typing import Any
 from urllib.parse import urljoin
 
-from requests import Response, get, post
+import requests
+from requests.adapters import HTTPAdapter, Retry
+
+s = requests.Session()
+
+retries = Retry(total=int(1e6),
+                connect=int(1e6),
+                backoff_factor=0.2,
+                backoff_max=60,
+                status_forcelist=[500, 502, 503, 504])
+
+s.mount('http://', HTTPAdapter(max_retries=retries))
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -44,7 +55,7 @@ class HassAPI:
     @property
     def online(self) -> bool:
         """Return True if the Home Assistant API is online."""
-        response: Response = get(self.url, headers=self.headers, timeout=self.timeout)
+        response: requests.Response = s.get(self.url, headers=self.headers, timeout=self.timeout)
         _LOGGER.debug("Home Assistant API online: %s", response.ok)
         return response.ok
 
@@ -55,7 +66,7 @@ class HassAPI:
         :return: The state object for the specified entity_id.
         """
         url = self._format_entity_url(entity_id)
-        response: Response = get(url, headers=self.headers, timeout=self.timeout)
+        response: requests.Response = s.get(url, headers=self.headers, timeout=self.timeout)
 
         # if we receive a 404 the entity does not exist and we can't continue
         if response.status_code == 404:
@@ -66,7 +77,7 @@ class HassAPI:
             )
         return response
 
-    def post_entity_state(self, entity_id: str, state: dict) -> Response:
+    def post_entity_state(self, entity_id: str, state: dict) -> requests.Response | None:
         """Post the state object for specified entity_id.
 
         Example:
@@ -82,13 +93,18 @@ class HassAPI:
         :return: The response object.
         """
         url = self._format_entity_url(entity_id)
-        if not state.get("state"):
-            raise ValueError("State object must contain a state key.")
-        response: Response = post(url, headers=self.headers, json=state)
+        if state.get("state") is None:
+            _LOGGER.warning("State object for %s has no state key, skipping state update for state %s", entity_id, state)
+            return
+
+        # post the state object
+        response: requests.Response = s.post(url, headers=self.headers, json=state)
         if not response.ok:
-            raise ConnectionError(
-                f"Error while posting entity {entity_id}: {response.reason}"
+            _LOGGER.error(
+                "Error while posting entity %s: %s. State was: %s",
+                entity_id, response.reason, state,
             )
+            return response
         if response.status_code == 201:
             _LOGGER.debug("Successfully created entity %s", entity_id)
         elif response.status_code == 200:

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import traceback
 from dataclasses import dataclass, field
 from typing import Any
 from urllib.parse import urljoin
@@ -128,7 +129,7 @@ class HassEntity:
     unit_of_measurement: str = field(default="")
     precision: int = field(default=1)
     icon: str = field(default="")
-    idempotent: bool = field(default=True)
+    idempotent: bool = field(default=False)
     _state: Any = field(init=False)
 
     def __post_init__(self):
@@ -172,10 +173,15 @@ class HassEntity:
 
         # post the state to the API
         try:
+            _LOGGER.debug("Posting entity %s state: %s", self.entity_id, state_dict)
             self.api.post_entity_state(self.entity_id, state_dict)
         except ConnectionError as err:
             _LOGGER.error("Error while posting entity %s: %s", self.entity_id, err)
             return
         except ValueError as err:
             _LOGGER.error("Error while posting entity %s: %s", self.entity_id, err)
+            return
+        # not so nice but we don't want to crash the whole app if the API is not reachable
+        except Exception:
+            _LOGGER.error(traceback.format_exc())
             return

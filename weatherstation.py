@@ -15,13 +15,11 @@ class WeatherStation:
 
     :param station_id: The id of the weather station
     :param model_type: The model type of the weather station
-    :param entity_id: The entity id of the weather station
     :param usb_path: The path to the usb device
     """
 
     station_id: int
     station_model: str
-    entity_id: str
     usb_path: str
     _command: str = field(init=False)
 

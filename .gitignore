@@ -164,3 +164,7 @@ weatherstation
 
 # secrets
 secrets.yaml
+
+# logging
+nohup.out
+haweatherstation.txt
